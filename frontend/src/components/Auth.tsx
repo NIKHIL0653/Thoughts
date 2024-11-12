@@ -3,6 +3,7 @@ import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config";
+import logo from '../assets/thoughts_logo.png'; // Import your logo
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const [postInputs, setPostInputs] = useState<SignupInput>({
@@ -22,17 +23,32 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
       const jwt = response.data;
       localStorage.setItem("token", jwt);
+      localStorage.setItem("username", postInputs.name || ""); // Store the user's name with a fallback
       navigate("/blogs");
     } catch (e) {
-      //
       alert("Error while signing up/in");
     }
   }
 
   return (
     <div className="h-screen flex justify-center items-center flex-col">
-      <div className="text-3xl font-extrabold">Create an account</div>
-      <div className="text-l font-normal text-slate-400">
+      {/* Logo added here */}
+      <img 
+        src={logo} 
+        alt="Blog Logo" 
+        className="mb-14 h-32 w-auto object-contain 
+             transition-transform duration-300 
+             hover:scale-105"
+        onError={(e) => {
+        console.error('Logo failed to load');
+        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200x75?text=BLOG+LOGO';
+  }}
+/>
+
+      <div className="text-3xl font-extrabold">
+        {type === "signup" ? "Create an account" : "Sign in to your account"}
+      </div>
+      <div className="text-l font-normal text-slate-400 mb-4">
         {type === "signin"
           ? "Don't have an account? "
           : "Already have an account? "}
@@ -43,32 +59,37 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
           {type === "signin" ? "Sign up" : "Log in"}
         </Link>
       </div>
+      {type === "signup" && (
+        <LabelInput
+          label="Name"
+          placeholder="Enter Name..."
+          onChange={(e) => {
+            setPostInputs((prev) => ({
+              ...prev,
+              name: e.target.value
+            }));
+          }}
+        />
+      )}
       <LabelInput
-        label="Name"
-        placeholder="Mayank..."
+        label="Email"
+        placeholder="Enter Email..."
         onChange={(e) => {
-          setPostInputs((prev) => {
-            return { ...prev, name: e.target.value };
-          });
-        }}
-      />
-      <LabelInput
-        label="Username"
-        placeholder="mb@gmail.com"
-        onChange={(e) => {
-          setPostInputs((prev) => {
-            return { ...prev, username: e.target.value };
-          });
+          setPostInputs((prev) => ({
+            ...prev,
+            username: e.target.value
+          }));
         }}
       />
       <LabelInput
         label="Password"
         type="password"
-        placeholder="password"
+        placeholder="Enter Password..."
         onChange={(e) => {
-          setPostInputs((prev) => {
-            return { ...prev, password: e.target.value };
-          });
+          setPostInputs((prev) => ({
+            ...prev,
+            password: e.target.value
+          }));
         }}
       />
       <button
@@ -81,8 +102,6 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     </div>
   );
 };
-
-
 
 interface LabelInputType {
   label: string;
