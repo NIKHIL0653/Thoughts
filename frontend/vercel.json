@@ -1,3 +1,11 @@
 {
-    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-}
+    "version": 2,
+    "builds": [
+      { "src": "frontend/package.json", "use": "@vercel/static-build" },
+      { "src": "backend/index.ts", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/api/v1/(.*)", "dest": "backend/index.ts" },
+      { "src": "/(.*)", "dest": "frontend/$1" }
+    ]
+  }
