@@ -10,7 +10,13 @@ const app = new Hono<{
   };
 }>();
 
-app.use("/*", cors());
+// app.use("/*", cors());
+
+// Configure CORS
+app.use("/*", cors({
+  origin: '*', // Change this to your frontend URL in production
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
 
 app.route("/api/v1/user", userRouter);
 app.route("/api/v1/blog", blogRouter);
